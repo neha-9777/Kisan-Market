@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 
-function ProductCard({ product, onAdd }) {
+function ProductCard({ product, onAdd, onDelete }) {
   const { user } = useContext(AuthContext);
   const [quantity, setQuantity] = useState(1);
   const [showDetails, setShowDetails] = useState(false);
@@ -21,6 +21,14 @@ function ProductCard({ product, onAdd }) {
     setShowDetails(!showDetails);
   };
 
+  const handleDelete = () => {
+    if (typeof onDelete === 'function') {
+      if (window.confirm(`Delete product "${product.name}"? This cannot be undone.`)) {
+        onDelete(product.id || product._id);
+      }
+    }
+  };
+
   const renderActionButton = () => {
     if (!user) {
       // Guest user
@@ -35,7 +43,7 @@ function ProductCard({ product, onAdd }) {
     }
 
     if (user.role === "farmer") {
-      // Farmer - show view details
+      // Farmer - show view details and delete button when callback is provided
       return (
         <div className="mt-2 space-y-2">
           <button
@@ -44,6 +52,14 @@ function ProductCard({ product, onAdd }) {
           >
             {showDetails ? "Hide Details" : "View Details"}
           </button>
+          {typeof onDelete === 'function' && (
+            <button
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded w-full font-medium transition-colors"
+            >
+              Delete Product
+            </button>
+          )}
           <p className="text-sm text-gray-600 text-center">🌾 Farmers sell products</p>
         </div>
       );
@@ -86,9 +102,25 @@ function ProductCard({ product, onAdd }) {
     }
   };
 
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    if (typeof imagePath !== 'string') return null;
+    if (imagePath.startsWith('http')) return imagePath;
+    if (imagePath.startsWith('/uploads')) return `http://localhost:5000${imagePath}`;
+    return imagePath;
+  };
+
+  const displayImage = product.images && product.images.length > 0
+    ? product.images[0]?.url || product.images[0]
+    : product.image;
+
+  const handleImageError = (e) => {
+    e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"%3E%3Crect fill="%23e5e7eb" width="300" height="200"/%3E%3Ctext x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" fill="%23999"%3ENo Image Available%3C/text%3E%3C/svg%3E';
+  };
+
   return (
     <div className="border border-gray-200 p-4 rounded-lg shadow hover:shadow-lg transition-shadow">
-      <img src={product.image} alt={product.name} className="h-40 w-full object-cover rounded mb-3" />
+      <img src={getImageUrl(displayImage) || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"%3E%3Crect fill="%23e5e7eb" width="300" height="200"/%3E%3Ctext x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" fill="%23999"%3ENo Image Available%3C/text%3E%3C/svg%3E'} alt={product.name} className="h-40 w-full object-cover rounded mb-3" onError={handleImageError} />
       <h2 className="font-bold text-lg mb-1">{product.name}</h2>
       <p className="text-green-600 font-semibold mb-3">₹{product.price}</p>
       {renderActionButton()}

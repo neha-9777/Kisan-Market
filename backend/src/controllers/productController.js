@@ -25,9 +25,9 @@ export const getProducts = async (req, res) => {
 };
 
 export const addProduct = async (req, res) => {
-  const { name, price, description, quantity, unit, category, farmerId, farmerName } = req.body;
-  if (!name || price === undefined || quantity === undefined) {
-    return res.status(400).json({ error: 'Name, price, and quantity are required' });
+  const { name, price, discountPrice, description, quantity, minOrderQuantity, unit, category, productType, stockStatus, location, organic, farmerId, farmerName } = req.body;
+  if (!name || price === undefined || quantity === undefined || minOrderQuantity === undefined || !location) {
+    return res.status(400).json({ error: 'Name, price, quantity, minimum order quantity, and location are required' });
   }
 
   const products = await readProducts();
@@ -36,19 +36,24 @@ export const addProduct = async (req, res) => {
     name,
     description: description || '',
     price: Number(price),
+    discountPrice: discountPrice ? Number(discountPrice) : null,
     quantity: Number(quantity),
+    minOrderQuantity: Number(minOrderQuantity),
     unit: unit || 'kg',
-    category: category || 'Other',
+    category: category || 'Others',
+    productType: productType || 'Fresh',
+    stockStatus: stockStatus || 'In Stock',
+    location,
+    organic: organic === 'true' || organic === true,
     farmerId: farmerId || null,
     farmerName: farmerName || 'Unknown farmer',
-    image: req.file ? `/uploads/products/${req.file.filename}` : null,
+    images: req.files ? req.files.map(file => `/uploads/products/${file.filename}`) : [],
     createdAt: new Date().toISOString()
   };
 
   products.push(newProduct);
   await writeProducts(products);
-
-  res.status(201).json({ data: newProduct });
+  res.status(201).json({ message: 'Product added successfully', data: newProduct });
 };
 
 export const deleteProduct = async (req, res) => {

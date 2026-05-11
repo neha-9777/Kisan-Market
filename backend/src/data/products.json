@@ -11,5 +11,52 @@
     "farmerName": "Unknown farmer",
     "image": null,
     "createdAt": "2026-05-11T03:05:24.335Z"
+  },
+  {
+    "id": "1778485326125",
+    "name": "lady'sFinger",
+    "description": "jhbgfvcds",
+    "price": 12,
+    "quantity": 123,
+    "unit": "kg",
+    "category": "vegetables",
+    "farmerId": null,
+    "farmerName": "Unknown farmer",
+    "image": null,
+    "createdAt": "2026-05-11T07:42:06.125Z"
+  },
+  {
+    "id": "1778485374432",
+    "name": "gra",
+    "description": "4erffds",
+    "price": 12,
+    "quantity": 12,
+    "unit": "kg",
+    "category": "vegetables",
+    "farmerId": null,
+    "farmerName": "Unknown farmer",
+    "image": null,
+    "createdAt": "2026-05-11T07:42:54.432Z"
+  },
+  {
+    "id": "1778514273777",
+    "name": "Pomegranate",
+    "description": "this is useful and healthy.",
+    "price": 198,
+    "discountPrice": 10,
+    "quantity": 2,
+    "minOrderQuantity": 1,
+    "unit": "kg",
+    "category": "Fruits",
+    "productType": "Fresh",
+    "stockStatus": "In Stock",
+    "location": "bhopal",
+    "organic": false,
+    "farmerId": "1778513954408",
+    "farmerName": "Neha Khatun",
+    "images": [
+      "/uploads/products/1778514273765-803676920.jpeg"
+    ],
+    "createdAt": "2026-05-11T15:44:33.777Z"
   }
 ]
