@@ -13,6 +13,7 @@ import Login from "./auth/Logig";
 import Register from "./auth/Register";
 import Footer from "./layout/Footer";
 import Navbar from "./layout/Navbar";
+import Chatbot from "./components/Chatbot";
 
 // Protected Route Component
 function ProtectedRoute({ children, allowedRoles }) {
@@ -62,6 +63,9 @@ function App() {
                     <AddProduct />
                   </ProtectedRoute>
                 } />
+
+                {/* AI Chatbot (public demo) */}
+                <Route path="/chat" element={<Chatbot />} />
 
                 {/* Auth Routes */}
                 <Route path="/login" element={<Login />} />

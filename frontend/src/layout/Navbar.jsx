@@ -49,6 +49,7 @@ function Navbar() {
           <Link to="/farmer" className="hover:opacity-90 transition">My Products</Link>
         )}
 
+        <Link to="/chat" className="hover:opacity-90 transition">AI Chat</Link>
         {user && (
           <Link to="/orders" className="hover:opacity-90 transition">Orders</Link>
         )}
