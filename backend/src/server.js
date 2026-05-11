@@ -4,11 +4,17 @@ import { Server } from "socket.io";
 import app from "./app.js";
 import config from "./config/env.js";
 import { connectDB } from "./config/db.js";
-
+import productRoutes from "./routes/productRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
+app.use("/api/products", productRoutes);
+app.use("/api/payment", paymentRoutes);
 const startServer = async () => {
   try {
     // Connect MongoDB
     await connectDB();
+
+    // API Routes
+    app.use("/api/products", productRoutes);
 
     // Create HTTP server
     const server = http.createServer(app);
@@ -31,12 +37,12 @@ const startServer = async () => {
         console.log(`User joined room: ${room}`);
       });
 
-      // Typing event
+      // Typing Event
       socket.on("typing", (data) => {
         socket.to(data.room).emit("typing", data);
       });
 
-      // Chat message event
+      // Chat Message Event
       socket.on("chat_message", (data) => {
         if (data.room) {
           socket.to(data.room).emit("chat_message", data);
@@ -49,13 +55,11 @@ const startServer = async () => {
       });
     });
 
-    // Start server
+    // Start Server
     const PORT = config.PORT || 5000;
 
     server.listen(PORT, () => {
-      console.log(
-        `Server running in ${config.NODE_ENV} mode on port ${PORT}`
-      );
+      console.log(`Server running in ${config.NODE_ENV} mode on port ${PORT}`);
     });
   } catch (error) {
     console.error("Server startup error:", error);

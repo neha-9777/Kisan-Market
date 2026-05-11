@@ -1,5 +1,22 @@
-import api from "./api";
+import axios from "axios";
 
-export const getProducts = () => api.get("/products");
-export const addProduct = (data) => api.post("/products", data);
-export const deleteProduct = (id) => api.delete(`/products/${id}`);
+const API = "http://localhost:5000/api/products";
+
+// Get all products
+export const getProducts = async () => {
+  return await axios.get(API);
+};
+
+// Add new product
+export const addProduct = async (formData) => {
+  return await axios.post(API, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+// Delete product
+export const deleteProduct = async (id) => {
+  return await axios.delete(`${API}/${id}`);
+};

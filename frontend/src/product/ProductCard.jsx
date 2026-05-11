@@ -1,8 +1,10 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
+import PaymentButton from "../components/PaymentButton";
 
 function ProductCard({ product, onAdd }) {
   const { user } = useContext(AuthContext);
+
   const [quantity, setQuantity] = useState(1);
   const [showDetails, setShowDetails] = useState(false);
 
@@ -23,10 +25,9 @@ function ProductCard({ product, onAdd }) {
 
   const renderActionButton = () => {
     if (!user) {
-      // Guest user
       return (
         <button
-          onClick={() => window.location.href = "/login"}
+          onClick={() => (window.location.href = "/login")}
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 mt-2 rounded w-full font-medium transition-colors"
         >
           Login to Buy
@@ -35,7 +36,6 @@ function ProductCard({ product, onAdd }) {
     }
 
     if (user.role === "farmer") {
-      // Farmer - show view details
       return (
         <div className="mt-2 space-y-2">
           <button
@@ -44,30 +44,39 @@ function ProductCard({ product, onAdd }) {
           >
             {showDetails ? "Hide Details" : "View Details"}
           </button>
-          <p className="text-sm text-gray-600 text-center">🌾 Farmers sell products</p>
+
+          <p className="text-sm text-gray-600 text-center">
+            🌾 Farmers sell products
+          </p>
         </div>
       );
     }
 
     if (user.role === "vendor") {
-      // Vendor - can add to cart with quantity
       return (
         <div className="mt-2 space-y-3">
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700">Qty:</label>
+            <label className="text-sm font-medium text-gray-700">
+              Qty:
+            </label>
+
             <button
               onClick={() => handleQuantityChange(quantity - 1)}
               className="px-2 py-1 bg-gray-300 hover:bg-gray-400 rounded font-medium"
             >
               −
             </button>
+
             <input
               type="number"
               value={quantity}
-              onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
+              onChange={(e) =>
+                handleQuantityChange(parseInt(e.target.value) || 1)
+              }
               className="w-12 text-center border border-gray-300 rounded py-1"
               min="1"
             />
+
             <button
               onClick={() => handleQuantityChange(quantity + 1)}
               className="px-2 py-1 bg-gray-300 hover:bg-gray-400 rounded font-medium"
@@ -75,30 +84,73 @@ function ProductCard({ product, onAdd }) {
               +
             </button>
           </div>
+
+          {/* Add to Cart */}
           <button
             onClick={handleAddWithQuantity}
             className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded w-full font-medium transition-colors"
           >
             Add to Cart
           </button>
+
+          {/* Razorpay Payment */}
+          <PaymentButton amount={product.price * quantity} />
         </div>
       );
     }
   };
 
   return (
-    <div className="border border-gray-200 p-4 rounded-lg shadow hover:shadow-lg transition-shadow">
-      <img src={product.image} alt={product.name} className="h-40 w-full object-cover rounded mb-3" />
-      <h2 className="font-bold text-lg mb-1">{product.name}</h2>
-      <p className="text-green-600 font-semibold mb-3">₹{product.price}</p>
+    <div className="border border-gray-200 p-4 rounded-lg shadow hover:shadow-lg transition-shadow bg-white">
+      
+      {/* Product Image */}
+      <img
+        src={
+          product.image ||
+          "https://via.placeholder.com/300x200?text=Farm+Product"
+        }
+        alt={product.name}
+        className="h-40 w-full object-cover rounded mb-3"
+      />
+
+      {/* Product Name */}
+      <h2 className="font-bold text-lg mb-1">
+        {product.name}
+      </h2>
+
+      {/* Price */}
+      <p className="text-green-600 font-semibold mb-3">
+        ₹{product.price}
+      </p>
+
+      {/* Buttons */}
       {renderActionButton()}
+
+      {/* Farmer Details */}
       {showDetails && user && user.role === "farmer" && (
         <div className="mt-4 p-3 bg-gray-50 rounded">
-          <p><strong>Description:</strong> {product.description || "No description available"}</p>
-          <p><strong>Quantity:</strong> {product.quantity} {product.unit}</p>
-          <p><strong>Category:</strong> {product.category}</p>
-          <p><strong>Available:</strong> {product.available ? "Yes" : "No"}</p>
-          <p><strong>Farmer:</strong> {product.farmerName}</p>
+          <p>
+            <strong>Description:</strong>{" "}
+            {product.description || "No description available"}
+          </p>
+
+          <p>
+            <strong>Quantity:</strong>{" "}
+            {product.quantity} {product.unit}
+          </p>
+
+          <p>
+            <strong>Category:</strong> {product.category}
+          </p>
+
+          <p>
+            <strong>Available:</strong>{" "}
+            {product.available ? "Yes" : "No"}
+          </p>
+
+          <p>
+            <strong>Farmer:</strong> {product.farmerName}
+          </p>
         </div>
       )}
     </div>

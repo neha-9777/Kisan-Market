@@ -104,7 +104,10 @@ function Products() {
         </div>
       ) : (
         <div className="max-w-7xl mx-auto p-6">
-          <ProductList products={products} onAdd={handleAdd} />
+          <ProductList
+  products={products}
+  onAdd={handleAdd}
+/>
         </div>
       )}
     </div>
