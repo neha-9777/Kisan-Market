@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
@@ -21,32 +21,63 @@ function Navbar() {
       </Link>
 
       <div className="hidden md:flex gap-6 items-center">
-        <Link to="/" className="hover:opacity-90 transition">Home</Link>
-        <Link to="/products" className="hover:opacity-90 transition">Products</Link>
+        <NavLink
+          to="/"
+          end
+          className={({ isActive }) =>
+            `hover:opacity-90 transition ${isActive ? "text-yellow-200 font-semibold underline underline-offset-4" : ""}`
+          }
+        >
+          Home
+        </NavLink>
+        <NavLink
+          to="/products"
+          className={({ isActive }) =>
+            `hover:opacity-90 transition ${isActive ? "text-yellow-200 font-semibold underline underline-offset-4" : ""}`
+          }
+        >
+          Products
+        </NavLink>
 
-        {/* Show Farmer link only for farmers */}
         {user?.role === "farmer" && (
-          <Link to="/farmer" className="hover:opacity-90 transition">Dashboard</Link>
+          <>
+            <NavLink
+              to="/farmer"
+              className={({ isActive }) =>
+                `hover:opacity-90 transition ${isActive ? "text-yellow-200 font-semibold underline underline-offset-4" : ""}`
+              }
+            >
+              Dashboard
+            </NavLink>
+            <NavLink
+              to="/my-products"
+              className={({ isActive }) =>
+                `hover:opacity-90 transition ${isActive ? "text-yellow-200 font-semibold underline underline-offset-4" : ""}`
+              }
+            >
+              My Products
+            </NavLink>
+          </>
         )}
 
-        {/* Show Vendor link only for vendors */}
         {user?.role === "vendor" && (
           <span className="text-sm opacity-75">🛒 Vendor</span>
         )}
 
         {user?.role === "vendor" && (
-          <Link to="/cart" className="relative hover:opacity-90 transition">
+          <NavLink
+            to="/cart"
+            className={({ isActive }) =>
+              `relative hover:opacity-90 transition ${isActive ? "text-yellow-200 font-semibold underline underline-offset-4" : ""}`
+            }
+          >
             🛒 Cart
             {cart.length > 0 && (
               <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                 {cart.length}
               </span>
             )}
-          </Link>
-        )}
-
-        {user?.role === "farmer" && (
-          <Link to="/farmer" className="hover:opacity-90 transition">My Products</Link>
+          </NavLink>
         )}
 
         <Link to="/chat" className="hover:opacity-90 transition">AI Chat</Link>
@@ -83,25 +114,55 @@ function Navbar() {
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="absolute top-16 left-0 right-0 bg-green-700 p-4 space-y-2 md:hidden">
-          <Link to="/" className="block hover:opacity-90">Home</Link>
-          <Link to="/products" className="block hover:opacity-90">Products</Link>
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) => `block hover:opacity-90 ${isActive ? "font-semibold underline underline-offset-4" : ""}`}
+          >
+            Home
+          </NavLink>
+          <NavLink
+            to="/products"
+            className={({ isActive }) => `block hover:opacity-90 ${isActive ? "font-semibold underline underline-offset-4" : ""}`}
+          >
+            Products
+          </NavLink>
 
-          {/* Mobile menu items based on role */}
           {user?.role === "farmer" && (
-            <Link to="/farmer" className="block hover:opacity-90">Dashboard</Link>
+            <>
+              <NavLink
+                to="/farmer"
+                className={({ isActive }) => `block hover:opacity-90 ${isActive ? "font-semibold underline underline-offset-4" : ""}`}
+              >
+                Dashboard
+              </NavLink>
+              <NavLink
+                to="/my-products"
+                className={({ isActive }) => `block hover:opacity-90 ${isActive ? "font-semibold underline underline-offset-4" : ""}`}
+              >
+                My Products
+              </NavLink>
+            </>
           )}
           {user?.role === "vendor" && (
             <span className="block text-sm opacity-75">🛒 Vendor Account</span>
           )}
 
           {user?.role === "vendor" && (
-            <Link to="/cart" className="block hover:opacity-90">Cart ({cart.length})</Link>
-          )}
-          {user?.role === "farmer" && (
-            <Link to="/farmer" className="block hover:opacity-90">My Products</Link>
+            <NavLink
+              to="/cart"
+              className={({ isActive }) => `block hover:opacity-90 ${isActive ? "font-semibold underline underline-offset-4" : ""}`}
+            >
+              Cart ({cart.length})
+            </NavLink>
           )}
           {user && (
-            <Link to="/orders" className="block hover:opacity-90">Orders</Link>
+            <NavLink
+              to="/orders"
+              className={({ isActive }) => `block hover:opacity-90 ${isActive ? "font-semibold underline underline-offset-4" : ""}`}
+            >
+              Orders
+            </NavLink>
           )}
           {user ? (
             <button onClick={handleLogout} className="block w-full text-left hover:opacity-90">Logout</button>

@@ -6,8 +6,10 @@ dotenv.config({ path: envPath });
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || '';
-const JWT_SECRET = process.env.JWT_SECRET || 'change_this_secret';
+// support both MONGO_URI and MONGODB_URL (some configs use different names)
+const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URL || process.env.MONGODB_URI || '';
+// support JWT_SECRET or JWT_SECRET_KEY
+const JWT_SECRET = process.env.JWT_SECRET || process.env.JWT_SECRET_KEY || 'change_this_secret';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
 const CLOUDINARY_URL = process.env.CLOUDINARY_URL || '';
 

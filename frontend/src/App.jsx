@@ -8,6 +8,7 @@ import Products from "./pages/Products";
 import Cart from "./pages/Cart";
 import Orders from "./pages/Order";
 import FarmerDashboard from "./farmer/FarmerDashboard";
+import MyProducts from "./farmer/MyProduct";
 import AddProduct from "./farmer/AddProduct";
 import Login from "./auth/Logig";
 import Register from "./auth/Register";
@@ -56,6 +57,11 @@ function App() {
                 <Route path="/farmer" element={
                   <ProtectedRoute allowedRoles={["farmer"]}>
                     <FarmerDashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/my-products" element={
+                  <ProtectedRoute allowedRoles={["farmer"]}>
+                    <MyProducts />
                   </ProtectedRoute>
                 } />
                 <Route path="/add-product" element={

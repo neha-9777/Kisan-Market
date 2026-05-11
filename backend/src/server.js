@@ -1,48 +1,66 @@
-import http from 'http';
-import { Server as SocketIOServer } from 'socket.io';
-import app from './app.js';
-import config from './config/env.js';
-import { connectDB } from './config/db.js';
+import http from "http";
+import { Server } from "socket.io";
 
-async function start() {
-  await connectDB();
+import app from "./app.js";
+import config from "./config/env.js";
+import { connectDB } from "./config/db.js";
 
-  const server = http.createServer(app);
-  const io = new SocketIOServer(server, {
-    cors: {
-      origin: '*',
-      methods: ['GET', 'POST'],
-    },
-  });
+const startServer = async () => {
+  try {
+    // Connect MongoDB
+    await connectDB();
 
-  io.on('connection', (socket) => {
-    console.log('Socket connected:', socket.id);
+    // Create HTTP server
+    const server = http.createServer(app);
 
-    socket.on('join', (room) => {
-      socket.join(room);
+    // Initialize Socket.io
+    const io = new Server(server, {
+      cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+      },
     });
 
-    socket.on('typing', (payload) => {
-      socket.to(payload.room).emit('typing', payload);
+    // Socket Connection
+    io.on("connection", (socket) => {
+      console.log("User connected:", socket.id);
+
+      // Join room
+      socket.on("join", (room) => {
+        socket.join(room);
+        console.log(`User joined room: ${room}`);
+      });
+
+      // Typing event
+      socket.on("typing", (data) => {
+        socket.to(data.room).emit("typing", data);
+      });
+
+      // Chat message event
+      socket.on("chat_message", (data) => {
+        if (data.room) {
+          socket.to(data.room).emit("chat_message", data);
+        }
+      });
+
+      // Disconnect
+      socket.on("disconnect", () => {
+        console.log("User disconnected:", socket.id);
+      });
     });
 
-    socket.on('chat_message', (msg) => {
-      // broadcast to room
-      if (msg.room) socket.to(msg.room).emit('chat_message', msg);
+    // Start server
+    const PORT = config.PORT || 5000;
+
+    server.listen(PORT, () => {
+      console.log(
+        `Server running in ${config.NODE_ENV} mode on port ${PORT}`
+      );
     });
+  } catch (error) {
+    console.error("Server startup error:", error);
+    process.exit(1);
+  }
+};
 
-    socket.on('disconnect', () => {
-      console.log('Socket disconnected:', socket.id);
-    });
-  });
-
-  const port = config.PORT || 5000;
-  server.listen(port, () => {
-    console.log(`Server running in ${config.NODE_ENV} on port ${port}`);
-  });
-}
-
-start().catch((err) => {
-  console.error('Failed to start server:', err);
-  process.exit(1);
-});
+startServer();

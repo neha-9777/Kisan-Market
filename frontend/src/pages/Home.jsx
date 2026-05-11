@@ -50,6 +50,42 @@ function Home() {
         </div>
       </div>
 
+      {/* Categories Section */}
+      <div className="max-w-6xl mx-auto py-16 px-6">
+        <div className="text-center mb-12">
+          <p className="text-sm uppercase tracking-[0.4em] text-green-700 font-semibold mb-3">Browse by category</p>
+          <h2 className="text-3xl font-bold">Find what you need fast</h2>
+          <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
+            Explore fresh produce, farming essentials, and specialty goods through beautifully organized category cards.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {[
+            { title: "Fruits", icon: "🍎" },
+            { title: "Vegetables", icon: "🥦" },
+            { title: "Seeds", icon: "🌾" },
+            { title: "Rice", icon: "🍚" },
+            { title: "Wheat", icon: "🌾" },
+            { title: "Pulses", icon: "🥣" },
+            { title: "Spices", icon: "🧂" },
+            { title: "Dairy Products", icon: "🧀" },
+            { title: "Organic Products", icon: "🌿" },
+            { title: "Farming Tools", icon: "🛠️" },
+            { title: "Fertilizers", icon: "🧪" },
+            { title: "Flowers", icon: "🌸" }
+          ].map((category) => (
+            <div key={category.title} className="bg-white p-6 rounded-3xl shadow-md border border-green-100 hover:shadow-xl transition-shadow duration-300">
+              <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-green-50 text-3xl mb-4">
+                {category.icon}
+              </div>
+              <h3 className="text-xl font-semibold mb-2">{category.title}</h3>
+              <p className="text-gray-600">Fresh selections, quality options, and farm-to-table goodness in every category.</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Features Section */}
       <div className="max-w-6xl mx-auto py-16 px-6">
         <h2 className="text-3xl font-bold text-center mb-12">
@@ -64,7 +100,7 @@ function Home() {
                 <p className="text-gray-600">Get the best prices for your produce without middlemen</p>
               </div>
               <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
-                <div className="text-4xl mb-4">📊</div>
+                <div className="text-4xl mb-4">�</div>
                 <h3 className="text-xl font-bold mb-2">Track Sales</h3>
                 <p className="text-gray-600">Monitor your product performance and revenue in real-time</p>
               </div>
