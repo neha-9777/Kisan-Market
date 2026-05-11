@@ -1,23 +1,48 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import { AuthContext } from "../context/AuthContext";
+import { addProduct } from "../services/productService";
 
 function AddProduct() {
   const [form, setForm] = useState({ name: "", price: "", description: "", quantity: "" });
+  const [loading, setLoading] = useState(false);
+  const { token, user } = useContext(AuthContext);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name || !form.price || !form.quantity) {
       alert("Please fill all required fields");
       return;
     }
-    console.log("Product added:", form);
-    alert("Product added successfully!");
-    setForm({ name: "", price: "", description: "", quantity: "" });
+    const authToken = token || localStorage.getItem("token");
+    if (!authToken) {
+      alert("Session expired or token missing. Please logout and login again.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("description", form.description);
+      formData.append("price", parseFloat(form.price));
+      formData.append("quantity", parseFloat(form.quantity));
+      formData.append("unit", "kg");
+      formData.append("category", "vegetables");
+
+      await addProduct(formData);
+      alert("Product added successfully!");
+      setForm({ name: "", price: "", description: "", quantity: "" });
+    } catch (error) {
+      console.error("Error adding product:", error);
+      alert("Failed to add product: " + (error.response?.data?.message || error.message));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -74,7 +99,7 @@ function AddProduct() {
               />
             </div>
             
-            <Button text="Add Product" className="w-full" />
+            <Button text={loading ? "Adding..." : "Add Product"} className="w-full" disabled={loading} />
           </form>
         </div>
       </div>

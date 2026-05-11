@@ -4,6 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 function ProductCard({ product, onAdd }) {
   const { user } = useContext(AuthContext);
   const [quantity, setQuantity] = useState(1);
+  const [showDetails, setShowDetails] = useState(false);
 
   const handleQuantityChange = (value) => {
     if (value >= 1) {
@@ -14,6 +15,10 @@ function ProductCard({ product, onAdd }) {
   const handleAddWithQuantity = () => {
     onAdd(product, quantity);
     setQuantity(1);
+  };
+
+  const toggleDetails = () => {
+    setShowDetails(!showDetails);
   };
 
   const renderActionButton = () => {
@@ -30,14 +35,14 @@ function ProductCard({ product, onAdd }) {
     }
 
     if (user.role === "farmer") {
-      // Farmer - show different action (maybe edit or view details)
+      // Farmer - show view details
       return (
         <div className="mt-2 space-y-2">
           <button
-            onClick={() => alert("View product details")}
+            onClick={toggleDetails}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded w-full font-medium transition-colors"
           >
-            View Details
+            {showDetails ? "Hide Details" : "View Details"}
           </button>
           <p className="text-sm text-gray-600 text-center">🌾 Farmers sell products</p>
         </div>
@@ -87,6 +92,15 @@ function ProductCard({ product, onAdd }) {
       <h2 className="font-bold text-lg mb-1">{product.name}</h2>
       <p className="text-green-600 font-semibold mb-3">₹{product.price}</p>
       {renderActionButton()}
+      {showDetails && user && user.role === "farmer" && (
+        <div className="mt-4 p-3 bg-gray-50 rounded">
+          <p><strong>Description:</strong> {product.description || "No description available"}</p>
+          <p><strong>Quantity:</strong> {product.quantity} {product.unit}</p>
+          <p><strong>Category:</strong> {product.category}</p>
+          <p><strong>Available:</strong> {product.available ? "Yes" : "No"}</p>
+          <p><strong>Farmer:</strong> {product.farmerName}</p>
+        </div>
+      )}
     </div>
   );
 }

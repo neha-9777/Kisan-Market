@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { getProducts } from "../services/productService";
+import { getProducts, deleteProduct } from "../services/productService";
 import ProductCard from "../product/ProductCard";
 
 function MyProducts() {
@@ -18,7 +18,9 @@ function MyProducts() {
       }
       try {
         const response = await getProducts();
-        const farmerProducts = response.data.filter(product => product.farmerId === user.id);
+        const products = response.data.data || [];
+        const farmerId = user?.id || user?._id;
+        const farmerProducts = products.filter(product => String(product.farmerId) === String(farmerId));
         setProducts(farmerProducts);
       } catch (err) {
         console.error("Error fetching products:", err);
@@ -30,6 +32,17 @@ function MyProducts() {
     fetchProducts();
   }, [user]);
 
+  const handleDeleteProduct = async (productId) => {
+    try {
+      await deleteProduct(productId);
+      setProducts((prev) => prev.filter((product) => String(product._id || product.id) !== String(productId)));
+      alert("Product deleted successfully.");
+    } catch (err) {
+      console.error("Error deleting product:", err);
+      alert("Unable to delete product. Please try again.");
+    }
+  };
+
   if (loading) return <div className="p-6">Loading products...</div>;
   if (error) return <div className="p-6 text-red-500">{error}</div>;
 
@@ -40,8 +53,12 @@ function MyProducts() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.length > 0 ? (
-          products.map(product => (
-            <ProductCard key={product.id} product={product} />
+          products.map((product, index) => (
+            <ProductCard
+              key={product.id || product._id || index}
+              product={product}
+              onDelete={handleDeleteProduct}
+            />
           ))
         ) : (
           <div className="col-span-full text-center text-gray-500">
